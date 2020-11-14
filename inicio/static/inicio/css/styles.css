@@ -1,0 +1,64 @@
+@font-face {
+    font-family: Hello;
+    src: url('../fonts/Hello.otf');
+}
+
+nav {
+    background-color: rgba(64, 79, 36, 1.0);
+    justify-self: center;
+    margin-bottom: 2%;
+}
+
+.navbar {
+    padding: 1.5%;
+    box-shadow: 2px 2px 5px rgb(80, 80, 80);    
+}
+
+.navbar-nav .nav-item .nav-link {
+    color: aliceblue;
+}
+
+
+.mainTittle {
+    font-family: Hello;
+    color: white; 
+    font-size: 550%;
+    justify-content: center; 
+    text-align: center;
+    padding-top: 2%;
+}
+
+body {
+    background:linear-gradient(rgba(68, 66, 66, 0.65), rgba(102, 90, 87, 0.65)), url("../img/bg_main.jpg");
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+}
+
+footer {
+    background-color: rgba(64, 79, 36, 1.0);
+    color: white;
+    margin-top: 2%;
+}
+
+.imgRedonda {
+    width:80px;
+    height:80px;
+    margin-bottom: 1.5%;
+}
+
+.presentacion {
+    background-color: rgba(64, 79, 36, 0.95);
+    padding: 10%;
+    color: white;
+}
+
+.intro-img {
+    width: 100%;
+    height: 100%;
+}
+
+.carrusel {
+    margin-top: 1%;
+}
+
