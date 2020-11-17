@@ -1,5 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+    <div class="container">
+      <h2 style="color:white;">Cargar producto:</h2>
+      <br>
+      <form action="" method="POST" target="_self">{% csrf_token %}
+        {% for field in formularioVenta %}
+        <div class="form">
+          <div class="row">
+            <div style="columns: 80px;">
+              <label for="{{ field.name }}" style="color: white;">
+                {{ field.label }}
+              </label>
+            </div>
+            <div style="columns: 300px;">
+              {{ field }}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <br>
+        <center>
+          <button type="submit" class="btn btn-primary">
+            Agregar al pedido
+          </button>
+        </center>
+      </form>
+    </div>
 {% endblock %}

@@ -1,5 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container">
+  <h1 class="display-1 text-center" style= "color: white;">PODUCTOS</h1>
+</div>
 
+<div class="container">
+{% for producto in productos %}
+  {% if forloop.first %}
+    <div class="row">
+  {% endif %}
+        <div class="col-md-3 mb-2">
+            <div class="card" style="width: 100%;">
+                <img src="{{ producto.imagen_prd.url }}" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">{{ producto.nombre_prd }}</h5>
+                  <p class="card-text">${{ producto.precio }} los 100gr.</p>
+                  <a href="#" class="btn btn-primary">Agregar al carrito</a>
+                </div>
+            </div>
+        </div>
+        {% if forloop.counter|divisibleby:4 %}</div><div class="row">{% endif %}
+          {% if forloop.last %}</div>{% endif %}
+{% endfor %}
+</div>
 {% endblock %}

@@ -1,12 +1,18 @@
 # Django Imports
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+
+# Project Imports
+from django.conf import settings
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('inicio.urls')),
-    path('products/', include('productos.urls')),
+    path('productos/', include('productos.urls')),
     path('shop/', include('tienda.urls')),
-    path('contact/', include('contacto.urls')),
+    path('contacto/', include('contacto.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
