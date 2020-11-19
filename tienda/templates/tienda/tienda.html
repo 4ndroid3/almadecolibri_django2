@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+  {% if user.is_authenticated %}
     <div class="container">
       <h2 style="color:white;">Cargar producto:</h2>
       <br>
       <form action="" method="POST" target="_self">{% csrf_token %}
+        <p style="color: white">USUARIO: {{ user.get_username }}</p>
         {% for field in formularioVenta %}
         <div class="form">
           <div class="row">
@@ -27,4 +29,10 @@
         </center>
       </form>
     </div>
+  {% else %}
+    <div class="container text-center">
+      <a class="nav-link" href="{% url 'login'%}?next={{request.path}}">REGISTRARSE</a>
+    </div>
+    
+  {% endif %}
 {% endblock %}

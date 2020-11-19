@@ -34,5 +34,6 @@ class RealizarPedido(forms.Form):
                 'placeholder': '100g',
             }
         ),
+        # Validador, el valor minimo que deja cargar es 1.
         validators=[MinValueValidator(1, message= "rambo")]
     )
