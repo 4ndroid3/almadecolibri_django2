@@ -6,13 +6,30 @@ from django.contrib.auth.models import User
 from productos.models import Producto
 
 
-
 class Venta(models.Model):
-    id_usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    id_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    cant_vendida = models.PositiveIntegerField()
+    id = models.AutoField(primary_key=True)
     fecha_venta = models.DateField(auto_now_add=True)
-    precio_venta = models.DecimalField(max_digits=10, decimal_places=2)
+    precio_total = models.DecimalField(max_digits=10, decimal_places=2)
+    procesada = models.BooleanField(default = False)
+    venta_finalizada = models.BooleanField(default = False)
+
+    class Meta:
+        verbose_name = 'Venta'
+        verbose_name_plural = 'Ventas'
 
     def __str__(self):
-        return str(self.id_usuario)
+        return str(self.id)
+        
+class Detalle_Venta(models.Model):
+    id_venta = models.ForeignKey(Venta, on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    id_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cant_vendida = models.PositiveIntegerField(verbose_name='Cantidad Vendida')
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        verbose_name = 'Detalle Venta'
+        verbose_name_plural = 'Detalle Ventas'
+
+    def __str__(self):
+        return str(self.id_producto)

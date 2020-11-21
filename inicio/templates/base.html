@@ -49,8 +49,10 @@
             </li>
             
             {% if user.is_authenticated %}
-              <li class="nav-item nav-link" style="color: white">
-                USUARIO: {{ user.get_username }}
+              <li class="nav-item" style="color: white">
+                <a class="nav-link" href="#">
+                  USUARIO: {{ user.get_username }}
+                </a>
               </li>
               <li class="nav-item"><a class="nav-link" href="{% url 'logout'%}?next={{request.path}}">SALIR</a></li>   
             {% else %}

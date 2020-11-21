@@ -9,7 +9,7 @@ from productos.models import Producto
 
 class RealizarPedido(forms.Form):
     # crea el formulario para realizar el pedido
-    usuario = forms.ModelChoiceField(
+    """usuario = forms.ModelChoiceField(
         queryset= User.objects.all(),
         widget=forms.Select(
             attrs = {
@@ -17,7 +17,7 @@ class RealizarPedido(forms.Form):
                 'placeholder': 'Usuario',
             }
         ) 
-    )
+    )"""
     producto = forms.ModelChoiceField(
         queryset= Producto.objects.all(),
         widget=forms.Select(

@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.contrib.auth.models import User
+from django.contrib.auth.base_user import AbstractBaseUser
 
 from productos.models import Producto
 from tienda.models import Venta
@@ -35,7 +37,7 @@ def tienda(request):
             precio_final = (infoFormulario['cantidad']/100)*precio_float
             
             venta = Venta(
-                id_usuario =infoFormulario['usuario'],
+                id_usuario = User.objects.get(username= request.user.username),
                 id_producto = infoFormulario['producto'], 
                 cant_vendida = infoFormulario['cantidad'],
                 precio_venta = precio_final

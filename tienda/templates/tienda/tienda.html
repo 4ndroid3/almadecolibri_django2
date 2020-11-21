@@ -2,32 +2,36 @@
 
 {% block content %}
   {% if user.is_authenticated %}
-    <div class="container">
-      <h2 style="color:white;">Cargar producto:</h2>
-      <br>
-      <form action="" method="POST" target="_self">{% csrf_token %}
-        <p style="color: white">USUARIO: {{ user.get_username }}</p>
-        {% for field in formularioVenta %}
-        <div class="form">
-          <div class="row">
-            <div style="columns: 80px;">
-              <label for="{{ field.name }}" style="color: white;">
-                {{ field.label }}
-              </label>
-            </div>
-            <div style="columns: 300px;">
-              {{ field }}
-            </div>
-          </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6 mb-2">
+          <h2 style="color:white;">Cargar producto:</h2>
+          <br>
+          <form action="" method="POST" target="_self">{% csrf_token %}
+            <p style="color: white">USUARIO: {{ user.get_username }}</p>
+            {% for field in formularioVenta %}
+               <div class="form">
+                <div class="row">
+                  <div class="col-md-auto mb-2">
+                    <label for="{{ field.name }}" style="color: white;">
+                      {{ field.label }}
+                    </label>
+                  </div>
+                  <div class="col-md-6 mb-2">
+                    {{ field }}
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+              <button type="submit" class="btn btn-primary">
+                Agregar al pedido
+              </button>
+          </form>
         </div>
-        {% endfor %}
-        <br>
-        <center>
-          <button type="submit" class="btn btn-primary">
-            Agregar al pedido
-          </button>
-        </center>
-      </form>
+        <div class="col-md-6 mb-2">
+          <h2 style="color: white">Carrito:</h2>
+        </div>
+      </div>
     </div>
   {% else %}
     <div class="container text-center">
