@@ -1,0 +1,80 @@
+
+<div class="card" style="width: 100%;">
+    <img src="{{ producto.imagen_prd.url }}" class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">{{ producto.nombre_prd }}</h5>
+        <p class="card-text">${{ producto.precio }} los 100gr.</p>
+        <a type="button" 
+            class="btn btn-primary" 
+            data-toggle="modal" 
+            data-target="#modal{{ producto.id }}">
+                Agregar al carrito
+        </a>
+
+        <!-- Modal -->
+
+        <div class="modal fade" 
+            id="modal{{ producto.id }}" 
+            tabindex="-1" 
+            role="dialog" 
+            aria-labelledby="exampleModalCenterTitle" 
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" id="modal{{ producto.id }}">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Agregar producto:</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="" method="POST" target="_self">{% csrf_token %}
+                            {% for field in formulario_agregar %}
+                                <div class="form">
+                                    <div class="row">
+                                        <div class="col-md-5 mb-2">
+                                            <p>Producto:</p>
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <p>{{ producto.nombre_prd }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-5 mb-2">
+                                            <p>Precio por 100g:</p>
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <p>${{ producto.precio }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-5 mb-2">
+                                            <label for="{{ field.name }}">
+                                                {{ field.label }}
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            {{ field }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Agregar</button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                    
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extrajs %}
+  
+
+{% endblock extrajs %}
