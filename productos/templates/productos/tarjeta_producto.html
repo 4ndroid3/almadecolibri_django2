@@ -29,7 +29,7 @@
                     </div>
                     <div class="modal-body">
                         <form action="" method="POST" target="_self">{% csrf_token %}
-                            {% for field in formulario_agregar %}
+                            {% for field in formulario_agregar.visible_fields %}
                                 <div class="form">
                                     <div class="row">
                                         <div class="col-md-5 mb-2">
@@ -57,8 +57,15 @@
                                             {{ field }}
                                         </div>
                                     </div>
+                                {% endfor %}
+                                <input 
+                                    type="hidden" 
+                                    name="id_producto" 
+                                    class="form-control" 
+                                    value="{{ producto.id }}" 
+                                    id="id_id_producto">
                                 </div>
-                            {% endfor %}
+                            
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
                                 <button type="submit" class="btn btn-primary">Agregar</button>

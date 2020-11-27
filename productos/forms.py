@@ -16,5 +16,11 @@ class AgregarAlPedido(forms.Form):
             }
         )
     )
-
-    id_producto = 
+    id_producto = forms.IntegerField(
+        widget=forms.HiddenInput(
+            attrs= {
+                'class':'form-control',
+                'value':'0',
+                }
+            )
+        )
