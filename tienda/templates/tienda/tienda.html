@@ -29,7 +29,14 @@
           </form>
         </div>
         <div class="col-md-6 mb-2">
-          <h2 style="color: white">Carrito:</h2>
+          <h2 style="color: white">Carrito &#x1f6d2;</h2>
+          <br>
+          <ul>
+            {% for venta in lista_ventas.0 %}
+              <p style="color: white">Producto: {{venta.0}}, Cantidad: {{venta.1}}, Precio: ${{venta.2}}</p>
+            {% endfor %}
+          </ul>
+          <h3 class="text-center" style="color: white">Total a pagar: ${{lista_ventas.1}}</h3>
         </div>
       </div>
     </div>

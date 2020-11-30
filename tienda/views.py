@@ -3,11 +3,41 @@ from django.contrib.auth.models import User
 from django.contrib.auth.base_user import AbstractBaseUser
 
 from productos.models import Producto
-from tienda.models import Venta
+from tienda.models import Venta, Detalle_Venta
 from tienda.forms import RealizarPedido
 
 def tienda(request):
     # View de la tienda de productos
+    # funcion que obtiene todoslos datos de una Venta/carrito
+    def obtener_carrito():
+        # Obtener carrito, devuelve un resumen de toda la venta.
+        dato_usuario = User.objects.get(username= request.user.username)
+        # info_venta devuelve una lista, con objectos Venta adentro
+        info_venta = Venta.objects.filter(id_usuario= dato_usuario, venta_finalizada= False)
+        
+        try:
+            lista_ventas = Detalle_Venta.objects.filter(id_venta= info_venta[0])
+            carrito = []
+            precio_final= 0.0
+            for re in lista_ventas:
+                nueva_lista = []
+                
+                producto = str(re).split()[0]
+                cantidad = str(re).split()[3]
+                total = str(re).split()[4]
+                nueva_lista.append(producto)
+                nueva_lista.append(cantidad)
+                nueva_lista.append(total)
+
+                precio_final += float(str(re).split()[4])
+                carrito.append(nueva_lista)
+            ambos = [carrito, precio_final]
+            print(ambos)
+        except:
+            ambos = ['','Carrito Vacio']
+
+        return ambos
+
     # Cuando la pagina pide un POST entra al if.
     if request.method == "POST":
         formularioVenta = RealizarPedido(request.POST)
@@ -15,49 +45,52 @@ def tienda(request):
         if formularioVenta.is_valid():
             # Paso los datos del formulario a una variable.
             infoFormulario = formularioVenta.cleaned_data
-            # Traigo los productos de la base, para extrar el precio.
-            productos = Producto.objects.all()
-            for producto in productos:
-                # Cuando aparezca el producto de la db que coincide con el 
-                # ingresado en la compra.
-                if producto == infoFormulario['producto']:
-                    # paso la info de DB a string y luego a lista para extraer el precio.
-                    lista_producto = str(producto).split()
-            
-            for precio_producto in lista_producto:
-                # Analizo el contenido de la lista
-                try:
-                    # Si encuentro una variable que se pueda convertir
-                    #  en float interrumpo el loop.
-                    precio_float = float(precio_producto)
-                    break
-                except:
-                    precio_float = 0.0
+            # Divido en una lista para obtener los datos del prod.
+            lista_obj_producto = str(infoFormulario['producto']).split()
+            # Obtengo elprecio del producto
+            precio = float(lista_obj_producto[1])          
             # Calculo el precio de lo que compro el usuario.
-            precio_final = (infoFormulario['cantidad']/100)*precio_float
-            
-            venta = Venta(
-                id_usuario = User.objects.get(username= request.user.username),
+            precio_final = (infoFormulario['cantidad']/100)*precio
+
+            id_usuario = User.objects.get(username= request.user.username)
+            # info_venta devuelve una lista, con objetos Venta abiertas.
+            info_venta = Venta.objects.filter(id_usuario= id_usuario, venta_finalizada= False)
+
+            venta = Detalle_Venta(
+                id_venta = info_venta[0], 
                 id_producto = infoFormulario['producto'], 
                 cant_vendida = infoFormulario['cantidad'],
-                precio_venta = precio_final
+                precio_unitario = precio_final
             )
 
             venta.save()
 
-            mensaje = "Gracias"
 
             context = {
-                'formularioVenta': formularioVenta,     
+                'formularioVenta': formularioVenta,
+                'lista_ventas': obtener_carrito(),
             }
 
             if request.method == "POST":
-                return render(request, "tienda/tienda.html", {'mensaje': mensaje})
+                formularioVenta = RealizarPedido()
+                
+                context = {
+                    'formularioVenta': formularioVenta,
+                    'lista_ventas': obtener_carrito(),
+                }
+
+                return render(request, "tienda/tienda.html", context)
 
             return render(request, "tienda/tienda.html", context)
 
 
     else:
         formularioVenta = RealizarPedido()
+        
+        
+        context = {
+            'formularioVenta': formularioVenta,
+            'lista_ventas': obtener_carrito(),
+        }
 
-    return render(request, "tienda/tienda.html", {"formularioVenta": formularioVenta})
+    return render(request, "tienda/tienda.html", context)
