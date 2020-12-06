@@ -11,7 +11,7 @@ class Venta(models.Model):
     id_usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     fecha_venta = models.DateField(auto_now_add=True)
     precio_total = models.DecimalField(max_digits=10, decimal_places=2, default= 0.0)
-    procesada = models.BooleanField(default = False)
+    venta_procesada = models.BooleanField(default = False)
     venta_finalizada = models.BooleanField(default = False)
 
     class Meta:

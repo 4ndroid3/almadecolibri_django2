@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.base_user import AbstractBaseUser
+import decimal
 
 from productos.models import Producto
 from tienda.models import Venta, Detalle_Venta
 from tienda.forms import RealizarPedido
+from tienda.forms import FinalizarPedido
 
 def tienda(request):
     # View de la tienda de productos
@@ -32,7 +34,6 @@ def tienda(request):
                 precio_final += float(str(re).split()[4])
                 carrito.append(nueva_lista)
             ambos = [carrito, precio_final]
-            print(ambos)
         except:
             ambos = ['','Carrito Vacio']
 
@@ -50,21 +51,73 @@ def tienda(request):
             # Obtengo elprecio del producto
             precio = float(lista_obj_producto[1])          
             # Calculo el precio de lo que compro el usuario.
-            precio_final = (infoFormulario['cantidad']/100)*precio
+            precio_final = (infoFormulario['cantidad']/100.00)*precio
 
-            id_usuario = User.objects.get(username= request.user.username)
-            # info_venta devuelve una lista, con objetos Venta abiertas.
-            info_venta = Venta.objects.filter(id_usuario= id_usuario, venta_finalizada= False)
-
-            venta = Detalle_Venta(
-                id_venta = info_venta[0], 
-                id_producto = infoFormulario['producto'], 
-                cant_vendida = infoFormulario['cantidad'],
-                precio_unitario = precio_final
-            )
-
-            venta.save()
-
+            # Obtengo el usuario registrado.
+            dato_usuario = User.objects.get(username= request.user.username)
+            # Obtengo el estado de la ultima venta registrada (si existe)
+            crear_venta = Venta.objects.filter(id_usuario = dato_usuario).last()
+            
+            try:
+                # Primer caso, que crea una venta, 
+                # cuando venta finalizada o procesada están True.
+                if (crear_venta.venta_finalizada == True) and (crear_venta.venta_procesada == True):
+                    print('roñita')
+                    # Agrego el dato del usuario para que se cree
+                    # una nueva venta.
+                    venta = Venta(
+                        id_usuario = dato_usuario,
+                    )
+                    # Busco la venta recien creada.
+                    info_venta = Venta.objects.filter(
+                            id_usuario = dato_usuario, 
+                            venta_finalizada = False, 
+                            venta_procesada = False,
+                    ).last()
+                    # Luego guardo la compra en la nueva venta.
+                    detall_venta = Detalle_Venta(
+                        id_venta = info_venta, 
+                        id_producto = infoFormulario['producto'], 
+                        cant_vendida = infoFormulario['cantidad'],
+                        precio_unitario = precio_final
+                    )
+                    detall_venta.save()
+                    # Agrego el precio a la venta.
+                    venta.precio_total += precio_final
+                    venta.save()
+                elif (crear_venta.venta_finalizada == False) and (crear_venta.venta_procesada == False):
+                    # Guardola compra en la venta.
+                    detall_venta = Detalle_Venta(
+                        id_venta = crear_venta, 
+                        id_producto = infoFormulario['producto'], 
+                        cant_vendida = infoFormulario['cantidad'],
+                        precio_unitario = precio_final
+                    )
+                    detall_venta.save()
+                    # Agrego el precio a la venta.
+                    crear_venta.precio_total += decimal.Decimal(precio_final)
+                    crear_venta.save()
+                elif (crear_venta.venta_finalizada == True) and (crear_venta.venta_procesada == False):
+                    # Busco si el usuario tiene 
+                    # venta finalizada pero no procesada.
+                    # Y la cambio a False
+                    crear_venta.venta_finalizada = False
+                    crear_venta.save()
+                    # Agrego el nuevo producto
+                    detall_venta = Detalle_Venta(
+                        id_venta = crear_venta, 
+                        id_producto = infoFormulario['producto'], 
+                        cant_vendida = infoFormulario['cantidad'],
+                        precio_unitario = precio_final
+                    )
+                    detall_venta.save()
+                    # Agrego el precio a la venta.
+                    crear_venta.precio_total += decimal.Decimal(precio_final)
+                    crear_venta.save()
+                else:
+                    print('Error de indice')
+            except:
+                print('Error de indice')
 
             context = {
                 'formularioVenta': formularioVenta,
@@ -83,14 +136,31 @@ def tienda(request):
 
             return render(request, "tienda/tienda.html", context)
 
+        if FinalizarPedido.is_valid():
+            infoFormulario = FinalizarPedido.cleaned_data
+            print(infoFormulario)
+        else:
+            formularioVenta = RealizarPedido()
+            finalizar_pedido = FinalizarPedido()
+            
+            context = {
+                'formularioVenta': formularioVenta,
+                'lista_ventas': obtener_carrito(),
+                'finalizar_pedido': finalizar_pedido
+            }
 
+            return render(request, "tienda/tienda.html", context)
     else:
-        formularioVenta = RealizarPedido()
+        # Pruebas
         
+        # Finpruebas
+        formularioVenta = RealizarPedido()
+        finalizar_pedido = FinalizarPedido()
         
         context = {
             'formularioVenta': formularioVenta,
             'lista_ventas': obtener_carrito(),
+            'finalizar_pedido': finalizar_pedido
         }
 
     return render(request, "tienda/tienda.html", context)

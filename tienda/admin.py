@@ -7,8 +7,8 @@ from tienda.models import Venta, Detalle_Venta
 
 
 class VentaAdmin(admin.ModelAdmin):
-    list_display = ("id", "fecha_venta","id_usuario", "precio_total","venta_finalizada", "procesada")
-    list_filter = ("fecha_venta", "procesada")
+    list_display = ("id", "fecha_venta","id_usuario", "precio_total","venta_finalizada", "venta_procesada")
+    list_filter = ("fecha_venta", "venta_procesada")
     ordering = ('-fecha_venta',)
     date_hierarchy = 'fecha_venta'
     readonly_fields = ('fecha_venta',)
