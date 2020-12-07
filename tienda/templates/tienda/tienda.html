@@ -38,7 +38,7 @@
           </ul>
           <h3 class="text-center" style="color: white">Total a pagar: ${{lista_ventas.1}}</h3>
           <form action="" method="POST" target="_self">{% csrf_token %}
-            {{finalizar_venta}}
+            {{finalizar_pedido}}
             <button type="submit">Finalizar Pedido</button>
           </form>
         </div>

@@ -95,24 +95,32 @@ def productos(request):
             return render(request, 'productos/productos.html', context) 
         
         else:
-            productos = Producto.objects.all()
-            formulario_agregar = AgregarAlPedido()  
-
+            productos = Producto.objects.all().order_by('nombre_prd')
+            formulario_agregar = AgregarAlPedido()
+            ordenar = [
+                Producto.objects.all().order_by('-precio'),
+                Producto.objects.all().order_by('id_categoria'),
+            ]
             context = {
-                'formulario_agregar' : formulario_agregar,
                 'productos': productos,
+                'formulario_agregar' : formulario_agregar,
+                'ordenar': ordenar
             }
 
             return render(request, 'productos/productos.html', context)
 
 
     else:
-        productos = Producto.objects.all()
+        productos = Producto.objects.all().order_by('nombre_prd')
         formulario_agregar = AgregarAlPedido()
-
+        ordenar = [
+            Producto.objects.all().order_by('-precio'),
+            Producto.objects.all().order_by('id_categoria'),
+        ]
         context = {
             'productos': productos,
-            'formulario_agregar' : formulario_agregar
+            'formulario_agregar' : formulario_agregar,
+            'ordenar': ordenar
         }
         
         

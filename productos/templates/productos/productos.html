@@ -4,6 +4,30 @@
 <div class="container">
   <h1 class="display-1 text-center" style= "color: white;">PRODUCTOS</h1>
 </div>
+<div class="container barrafiltro">
+  <ul class="nav justify-content-center">
+    <li>
+      <form class="form-inline">
+        <label style="padding-right:0.3cm;" for="">BUSQUEDA DE PRODUCTO</label>
+        <input class="form-control mr-sm-2" type="search" placeholder="Ej: Almendra" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+      </form>
+    </li>
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" style="color: white" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">ORDENAR</a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="">Precio</a>
+        <a class="dropdown-item" href="#">Categoria</a>
+        <a class="dropdown-item" href="#">Mas Vendidos</a>
+      </div>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" style="color: white" href="#">RESTAURAR</a>
+    </li>
+  </ul>
+</div>
+
+<br>
 
 <div class="container">
 {% for producto in productos %}

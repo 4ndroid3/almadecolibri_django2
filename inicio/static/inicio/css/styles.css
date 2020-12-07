@@ -15,7 +15,7 @@ nav {
 }
 
 .navbar-nav .nav-item .nav-link {
-    color: aliceblue;
+    color: white;
 }
 
 
@@ -50,6 +50,12 @@ footer {
 .presentacion {
     background-color: rgba(64, 79, 36, 0.95);
     padding: 10%;
+    color: white;
+}
+
+.barrafiltro {
+    background-color: rgba(64, 79, 36, 0.95);
+    padding: 1%;
     color: white;
 }
 
