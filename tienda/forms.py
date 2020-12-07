@@ -30,4 +30,4 @@ class RealizarPedido(forms.Form):
 class FinalizarPedido(forms.Form):
     # Formulario para garantizar que un
     # pedido está listo para ser Procesado
-    venta_ok = forms.NullBooleanField()
+    venta_ok = forms.BooleanField()

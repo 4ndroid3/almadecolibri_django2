@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.contrib.auth.base_user import AbstractBaseUser
 import decimal
 
 from productos.models import Producto
@@ -12,10 +11,15 @@ def tienda(request):
     # View de la tienda de productos
     # funcion que obtiene todoslos datos de una Venta/carrito
     def obtener_carrito():
-        # Obtener carrito, devuelve un resumen de toda la venta.
-        dato_usuario = User.objects.get(username= request.user.username)
-        # info_venta devuelve una lista, con objectos Venta adentro
-        info_venta = Venta.objects.filter(id_usuario= dato_usuario, venta_finalizada= False)
+        
+        
+        try:
+            # Obtener carrito, devuelve un resumen de toda la venta.
+            dato_usuario = User.objects.get(username= request.user.username)
+            # info_venta devuelve una lista, con objectos Venta adentro
+            info_venta = Venta.objects.filter(id_usuario= dato_usuario, venta_finalizada= False)
+        except:
+            print('Error de usuario logueado')
         
         try:
             lista_ventas = Detalle_Venta.objects.filter(id_venta= info_venta[0])
@@ -41,6 +45,8 @@ def tienda(request):
 
     # Cuando la pagina pide un POST entra al if.
     if request.method == "POST":
+        # Obtengo el usuario registrado.
+        dato_usuario = User.objects.get(username= request.user.username)
         formularioVenta = RealizarPedido(request.POST)
         # Si se llenaron todos los casilleros del formulario entra al if.
         if formularioVenta.is_valid():
@@ -52,107 +58,143 @@ def tienda(request):
             precio = float(lista_obj_producto[1])          
             # Calculo el precio de lo que compro el usuario.
             precio_final = (infoFormulario['cantidad']/100.00)*precio
-
-            # Obtengo el usuario registrado.
-            dato_usuario = User.objects.get(username= request.user.username)
+            print(infoFormulario['producto'])
+            
             # Obtengo el estado de la ultima venta registrada (si existe)
             crear_venta = Venta.objects.filter(id_usuario = dato_usuario).last()
+            if crear_venta != None:
             
-            try:
-                # Primer caso, que crea una venta, 
-                # cuando venta finalizada o procesada están True.
-                if (crear_venta.venta_finalizada == True) and (crear_venta.venta_procesada == True):
-                    print('roñita')
-                    # Agrego el dato del usuario para que se cree
-                    # una nueva venta.
-                    venta = Venta(
-                        id_usuario = dato_usuario,
-                    )
-                    # Busco la venta recien creada.
-                    info_venta = Venta.objects.filter(
-                            id_usuario = dato_usuario, 
-                            venta_finalizada = False, 
-                            venta_procesada = False,
-                    ).last()
-                    # Luego guardo la compra en la nueva venta.
-                    detall_venta = Detalle_Venta(
-                        id_venta = info_venta, 
-                        id_producto = infoFormulario['producto'], 
-                        cant_vendida = infoFormulario['cantidad'],
-                        precio_unitario = precio_final
-                    )
-                    detall_venta.save()
-                    # Agrego el precio a la venta.
-                    venta.precio_total += precio_final
-                    venta.save()
-                elif (crear_venta.venta_finalizada == False) and (crear_venta.venta_procesada == False):
-                    # Guardola compra en la venta.
-                    detall_venta = Detalle_Venta(
-                        id_venta = crear_venta, 
-                        id_producto = infoFormulario['producto'], 
-                        cant_vendida = infoFormulario['cantidad'],
-                        precio_unitario = precio_final
-                    )
-                    detall_venta.save()
-                    # Agrego el precio a la venta.
-                    crear_venta.precio_total += decimal.Decimal(precio_final)
-                    crear_venta.save()
-                elif (crear_venta.venta_finalizada == True) and (crear_venta.venta_procesada == False):
-                    # Busco si el usuario tiene 
-                    # venta finalizada pero no procesada.
-                    # Y la cambio a False
-                    crear_venta.venta_finalizada = False
-                    crear_venta.save()
-                    # Agrego el nuevo producto
-                    detall_venta = Detalle_Venta(
-                        id_venta = crear_venta, 
-                        id_producto = infoFormulario['producto'], 
-                        cant_vendida = infoFormulario['cantidad'],
-                        precio_unitario = precio_final
-                    )
-                    detall_venta.save()
-                    # Agrego el precio a la venta.
-                    crear_venta.precio_total += decimal.Decimal(precio_final)
-                    crear_venta.save()
-                else:
-                    print('Error de indice')
-            except:
-                print('Error de indice')
+                try:
+                    # Primer caso, que crea una venta, 
+                    # cuando venta finalizada o procesada están True.
+                    if (crear_venta.venta_finalizada == True) and (crear_venta.venta_procesada == True):
+                        # Agrego el dato del usuario para que se cree
+                        # una nueva venta.
+                        venta = Venta(
+                            id_usuario = dato_usuario,
+                        )
+                        venta.save()
+                        # Busco la venta recien creada.
+                        info_venta = Venta.objects.filter(
+                                id_usuario = dato_usuario, 
+                                venta_finalizada = False, 
+                                venta_procesada = False,
+                        ).last()
+                        print(info_venta)
+                        # Luego guardo la compra en la nueva venta.
+                        detall_venta = Detalle_Venta(
+                            id_venta = info_venta, 
+                            id_producto = infoFormulario['producto'], 
+                            cant_vendida = infoFormulario['cantidad'],
+                            precio_unitario = precio_final
+                        )
+                        detall_venta.save()
+                        # Agrego el precio a la venta.
+                        venta.precio_total += precio_final
+                        venta.save()
+                    elif (crear_venta.venta_finalizada == False) and (crear_venta.venta_procesada == False):
+                        # Guardola compra en la venta.
+                        detall_venta = Detalle_Venta(
+                            id_venta = crear_venta, 
+                            id_producto = infoFormulario['producto'], 
+                            cant_vendida = infoFormulario['cantidad'],
+                            precio_unitario = precio_final
+                        )
+                        detall_venta.save()
+                        # Agrego el precio a la venta.
+                        crear_venta.precio_total += decimal.Decimal(precio_final)
+                        crear_venta.save()
+                    elif (crear_venta.venta_finalizada == True) and (crear_venta.venta_procesada == False):
+                        # Busco si el usuario tiene 
+                        # venta finalizada pero no procesada.
+                        # Y la cambio a False
+                        crear_venta.venta_finalizada = False
+                        crear_venta.save()
+                        # Agrego el nuevo producto
+                        detall_venta = Detalle_Venta(
+                            id_venta = crear_venta, 
+                            id_producto = infoFormulario['producto'], 
+                            cant_vendida = infoFormulario['cantidad'],
+                            precio_unitario = precio_final
+                        )
+                        detall_venta.save()
+                        # Agrego el precio a la venta.
+                        crear_venta.precio_total += decimal.Decimal(precio_final)
+                        crear_venta.save()
+                    else:
+                        print('Error de indice 1')
+                except:
+                    print('Error de indice 2')
+            else:
+                venta = Venta(
+                    id_usuario = dato_usuario,
+                )
+                venta.save()
+                # Busco la venta recien creada.
+                info_venta = Venta.objects.filter(
+                        id_usuario = dato_usuario, 
+                        venta_finalizada = False, 
+                        venta_procesada = False,
+                ).last()
+                print(info_venta)
+                # Luego guardo la compra en la nueva venta.
+                detall_venta = Detalle_Venta(
+                    id_venta = info_venta, 
+                    id_producto = infoFormulario['producto'], 
+                    cant_vendida = infoFormulario['cantidad'],
+                    precio_unitario = precio_final
+                )
+                detall_venta.save()
+                # Agrego el precio a la venta.
+                venta.precio_total += precio_final
+                venta.save()
 
-            context = {
-                'formularioVenta': formularioVenta,
-                'lista_ventas': obtener_carrito(),
-            }
-
-            if request.method == "POST":
-                formularioVenta = RealizarPedido()
-                
-                context = {
-                    'formularioVenta': formularioVenta,
-                    'lista_ventas': obtener_carrito(),
-                }
-
-                return render(request, "tienda/tienda.html", context)
-
-            return render(request, "tienda/tienda.html", context)
-
-        if FinalizarPedido.is_valid():
-            infoFormulario = FinalizarPedido.cleaned_data
-            print(infoFormulario)
-        else:
-            formularioVenta = RealizarPedido()
             finalizar_pedido = FinalizarPedido()
-            
             context = {
                 'formularioVenta': formularioVenta,
                 'lista_ventas': obtener_carrito(),
                 'finalizar_pedido': finalizar_pedido
             }
 
+            if request.method == "POST":
+                formularioVenta = RealizarPedido()
+                finalizar_pedido = FinalizarPedido()
+                
+                context = {
+                    'formularioVenta': formularioVenta,
+                    'lista_ventas': obtener_carrito(),
+                    'finalizar_pedido': finalizar_pedido
+                }
+
+                return render(request, "tienda/tienda.html", context)
+
             return render(request, "tienda/tienda.html", context)
+
+        formulario_finalizar = FinalizarPedido(request.POST)
+        if formulario_finalizar.is_valid():
+            infoFormulario = formulario_finalizar.cleaned_data
+            print(infoFormulario)
+
+            finalizar_pedido = Venta.objects.filter(
+                id_usuario = dato_usuario,
+            ).last()
+            if (finalizar_pedido.venta_procesada == False) and (finalizar_pedido.venta_finalizada == False):
+                finalizar_pedido.venta_finalizada = infoFormulario['venta_ok']
+                finalizar_pedido.save()
+
+            
+            formularioVenta = RealizarPedido()
+            finalizar_pedido = FinalizarPedido()
+                
+            context = {
+                'formularioVenta': formularioVenta,
+                'lista_ventas': obtener_carrito(),
+                'finalizar_pedido': finalizar_pedido
+            }
+
+        return render(request, "tienda/tienda.html", context)
     else:
         # Pruebas
-        
         # Finpruebas
         formularioVenta = RealizarPedido()
         finalizar_pedido = FinalizarPedido()

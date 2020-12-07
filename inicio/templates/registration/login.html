@@ -2,38 +2,42 @@
 
 {% block content %}
 <div class="container text-center">
-    {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
-    {% endif %}
-
-    {% if next %}
-        {% if user.is_authenticated %}
-        <p>Your account doesn't have access to this page. To proceed,
-        please login with an account that has access.</p>
-        {% else %}
-        <p>Please login to see this page.</p>
+    <div class="jumbotron">
+        {% if form.errors %}
+        <p>Su usuario y contraseña no coinciden, por favor intentelo otra vez.</p>
         {% endif %}
-    {% endif %}
 
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
+        {% if next %}
+            {% if user.is_authenticated %}
+            <p>Su cuenta no tiene acceso a esta pagina. Para proceder, 
+                entre con una cuenta que tenga permisos</p>
+            {% else %}
+            <p>Para ingresar a la tienda Registrese</p>
+            {% endif %}
+        {% endif %}
 
-        <div>
-            <td>{{ form.username.label_tag }}</td>
-            <td>{{ form.username }}</td>
-        </div>
-        <div>
-            <td>{{ form.password.label_tag }}</td>
-            <td>{{ form.password }}</td>
-        </div>
-        <div>
-            <input class="btn btn-primary" type="submit" value="Ingresar" />
-            <input type="hidden" name="next" value="{{ next }}" />
-        </div>
-    </form>
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
 
-    {# Assumes you setup the password_reset view in your URLconf #}
-    <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+            <div>
+                <td>{{ form.username.label_tag }}</td>
+                <td>{{ form.username }}</td>
+            </div>
+            <div>
+                <td>{{ form.password.label_tag }}</td>
+                <td>{{ form.password }}</td>
+            </div>
+            <div>
+                <input class="btn btn-primary" type="submit" value="Ingresar" />
+                <input type="hidden" name="next" value="{{ next }}" />
+            </div>
+        </form>
+
+        {# Assumes you setup the password_reset view in your URLconf #}
+        <p><a href="{% url 'password_reset' %}">¿No recuerda su contraseña?</a></p>
+        <p><a href="{% url 'Register' %}">Cree su cuenta</a></p>
+    </div>
+    
 </div>
 
 
