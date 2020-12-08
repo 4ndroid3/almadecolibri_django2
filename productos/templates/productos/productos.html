@@ -7,23 +7,25 @@
 <div class="container barrafiltro">
   <ul class="nav justify-content-center">
     <li>
-      <form class="form-inline">
+      <form class="form-inline" type="get" action="." style="margin: 0">
         <label style="padding-right:0.3cm;" for="">BUSQUEDA DE PRODUCTO</label>
-        <input class="form-control mr-sm-2" type="search" placeholder="Ej: Almendra" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+        <input class="form-control mr-sm-2" id="search_box" type="search" name="search_box" placeholder="Ej: Almendra" >
+        <button id="search_submit" type="submit" class="btn btn-outline-success my-2 my-sm-0" >Buscar</button>
       </form>
     </li>
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" style="color: white" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">ORDENAR</a>
-      <div class="dropdown-menu">
-        <a class="dropdown-item" href="">Precio</a>
-        <a class="dropdown-item" href="#">Categoria</a>
-        <a class="dropdown-item" href="#">Mas Vendidos</a>
-      </div>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" style="color: white" href="#">RESTAURAR</a>
-    </li>
+    <form class="form-inline" type="get" action="." style="margin: 0">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" style="color: white" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">ORDENAR</a>
+        <div class="dropdown-menu">
+            <input class="dropdown-item" type="submit" id="ord_precio" name="precio" value="Precio">
+            <input class="dropdown-item" type="submit" id="ord_categoria" name="categoria" value="Categoria">
+            <a class="dropdown-item" href="#">Mas Vendidos</a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" style="color: white" href="#">RESTAURAR</a>
+      </li>
+    </form>
   </ul>
 </div>
 

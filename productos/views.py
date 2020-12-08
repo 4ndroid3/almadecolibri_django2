@@ -109,19 +109,23 @@ def productos(request):
 
             return render(request, 'productos/productos.html', context)
 
-
     else:
-        productos = Producto.objects.all().order_by('nombre_prd')
+        
+        # Trae la palabra escrita en la searchbox de productos, 
+        # si no hay palabra trae un espacio vacio.
+        palabra_buscada = request.GET.get('search_box', '')
+        busqueda_producto = Producto.objects.filter(nombre_prd__icontains=palabra_buscada).order_by('nombre_prd')
+        
+        ordenar_por = request.GET.get('ord_precio', 'ewew')
+        print(ordenar_por)
         formulario_agregar = AgregarAlPedido()
-        ordenar = [
-            Producto.objects.all().order_by('-precio'),
-            Producto.objects.all().order_by('id_categoria'),
-        ]
+
+
         context = {
-            'productos': productos,
+            'productos': busqueda_producto,
             'formulario_agregar' : formulario_agregar,
-            'ordenar': ordenar
         }
         
         
         return render(request, 'productos/productos.html', context)
+    
