@@ -7,4 +7,5 @@ from . import views
 
 urlpatterns = [
     path('',views.productos, name="Productos"),
+    path('<int:param>/', views.productos),
 ]

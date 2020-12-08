@@ -8,7 +8,7 @@ from tienda.models import Venta, Detalle_Venta
 from productos.forms import AgregarAlPedido
 
 
-def productos(request):
+def productos(request,param=0):
     # View que muestra un resumen de los productos ofrecidos
     if request.method == "POST":
         dato_usuario = User.objects.get(username= request.user.username)
@@ -110,16 +110,20 @@ def productos(request):
             return render(request, 'productos/productos.html', context)
 
     else:
+        if param == 0:
+            palabra_buscada = request.GET.get('search_box', '')
+            busqueda_producto = Producto.objects.filter(
+                nombre_prd__icontains = palabra_buscada).order_by('nombre_prd')
+        elif param == 1:
+            palabra_buscada = request.GET.get('search_box', '')
+            busqueda_producto = Producto.objects.filter(
+                nombre_prd__icontains=palabra_buscada).order_by('-precio')
+        elif param == 2:
+            palabra_buscada = request.GET.get('search_box', '')
+            busqueda_producto = Producto.objects.filter(
+                nombre_prd__icontains=palabra_buscada).order_by('id_categoria')        
         
-        # Trae la palabra escrita en la searchbox de productos, 
-        # si no hay palabra trae un espacio vacio.
-        palabra_buscada = request.GET.get('search_box', '')
-        busqueda_producto = Producto.objects.filter(nombre_prd__icontains=palabra_buscada).order_by('nombre_prd')
-        
-        ordenar_por = request.GET.get('ord_precio', 'ewew')
-        print(ordenar_por)
         formulario_agregar = AgregarAlPedido()
-
 
         context = {
             'productos': busqueda_producto,
