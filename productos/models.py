@@ -15,7 +15,7 @@ class Producto(models.Model):
         verbose_name_plural = 'Productos'
 
     def __str__(self):
-        return "{} {} {}".format(str(self.nombre_prd), str(self.precio), str(self.id_categoria))
+        return self.nombre_prd
 
 class Categoria_prod(models.Model):
     categoria = models.CharField(max_length=15)

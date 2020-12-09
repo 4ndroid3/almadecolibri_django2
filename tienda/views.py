@@ -11,37 +11,24 @@ def tienda(request):
     # View de la tienda de productos
     # funcion que obtiene todoslos datos de una Venta/carrito
     def obtener_carrito():
+        dato_usuario = User.objects.get(username= request.user.username)
+        venta = Venta.objects.filter(id_usuario = dato_usuario, venta_finalizada = False).last()
+        detalle_venta = Detalle_Venta.objects.filter(id_venta = venta)
+        lista_prd = []
+        for x in detalle_venta:
+            lista_1 = [
+                str(x.id_producto),
+                x.cant_vendida,
+                str(x.precio_unitario),
+                venta.id,
+                str(venta.precio_total),
+            ]
+            lista_prd.append(lista_1)
+        return lista_prd
+            
         
-        
-        try:
-            # Obtener carrito, devuelve un resumen de toda la venta.
-            dato_usuario = User.objects.get(username= request.user.username)
-            # info_venta devuelve una lista, con objectos Venta adentro
-            info_venta = Venta.objects.filter(id_usuario= dato_usuario, venta_finalizada= False)
-        except:
-            print('Error de usuario logueado')
-        
-        try:
-            lista_ventas = Detalle_Venta.objects.filter(id_venta= info_venta[0])
-            carrito = []
-            precio_final= 0.0
-            for re in lista_ventas:
-                nueva_lista = []
-                
-                producto = str(re).split()[0]
-                cantidad = str(re).split()[3]
-                total = str(re).split()[4]
-                nueva_lista.append(producto)
-                nueva_lista.append(cantidad)
-                nueva_lista.append(total)
 
-                precio_final += float(str(re).split()[4])
-                carrito.append(nueva_lista)
-            ambos = [carrito, precio_final]
-        except:
-            ambos = ['','Carrito Vacio']
 
-        return ambos
 
     # Cuando la pagina pide un POST entra al if.
     if request.method == "POST":
@@ -53,11 +40,13 @@ def tienda(request):
             # Paso los datos del formulario a una variable.
             infoFormulario = formularioVenta.cleaned_data
             # Divido en una lista para obtener los datos del prod.
-            lista_obj_producto = str(infoFormulario['producto']).split()
+            #lista_obj_producto = str(infoFormulario['producto'])
             # Obtengo elprecio del producto
-            precio = float(lista_obj_producto[1])          
+            #precio = float(lista_obj_producto)          
+            prd_elegido = Producto.objects.filter(nombre_prd= str(infoFormulario['producto']))
+           
             # Calculo el precio de lo que compro el usuario.
-            precio_final = (infoFormulario['cantidad']/100.00)*precio
+            precio_final = (infoFormulario['cantidad']/100.00)*float(prd_elegido[0].precio)
             print(infoFormulario['producto'])
             
             # Obtengo el estado de la ultima venta registrada (si existe)
@@ -195,6 +184,7 @@ def tienda(request):
         return render(request, "tienda/tienda.html", context)
     else:
         # Pruebas
+        
         # Finpruebas
         formularioVenta = RealizarPedido()
         finalizar_pedido = FinalizarPedido()
