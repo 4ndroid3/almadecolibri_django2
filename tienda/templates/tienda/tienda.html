@@ -37,6 +37,7 @@
                 <th scope="col">Producto</th>
                 <th scope="col">Cantidad</th>
                 <th scope="col">Precio</th>
+                <th scope="col">Eliminar</th>
               </tr>
             </thead>
             <h1>{{lista_ventas.type}}</h1>
@@ -46,15 +47,22 @@
                   <td>{{ venta.0 }}</td>
                   <td>{{ venta.1 }} g</td>
                   <td>${{ venta.2 }}</td>
+                  <td style="width: 1%">
+                    <div class="text-center">
+                      <a class="btn btn-sm btn-danger text-center" href="/shop/{{ venta.3 }}/{{ venta.0 }}" role="button">X</a>
+                    </div>
+                  </td>
                 </tr>
             {% endfor %}
                 <tr>
                   <td> </td>
                   <th>Total</th>
                   <td>${{ lista_ventas.0.4 }}</td>
+                  <td> </td>
                 </tr>
               </tbody>
           </table>
+          <a class="btn btn-primary" href="/shop/1/safe" role="button">Finalizar Pedido</a>
         </div>
       </div>
     </div>

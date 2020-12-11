@@ -7,29 +7,33 @@ from tienda.models import Venta, Detalle_Venta
 from tienda.forms import RealizarPedido
 from tienda.forms import FinalizarPedido
 
-def tienda(request):
+def tienda(request, param_int=0, param_str=None):
+    try:
+        dato_usuario = User.objects.get(username= request.user.username)
+    except: 
+        print('Usuario Deslogueado')
     # View de la tienda de productos
     # funcion que obtiene todoslos datos de una Venta/carrito
     def obtener_carrito():
-        dato_usuario = User.objects.get(username= request.user.username)
-        venta = Venta.objects.filter(id_usuario = dato_usuario, venta_finalizada = False).last()
-        detalle_venta = Detalle_Venta.objects.filter(id_venta = venta)
-        lista_prd = []
-        for x in detalle_venta:
-            lista_1 = [
-                str(x.id_producto),
-                x.cant_vendida,
-                str(x.precio_unitario),
-                venta.id,
-                str(venta.precio_total),
-            ]
-            lista_prd.append(lista_1)
-        return lista_prd
+        try:
+            dato_usuario = User.objects.get(username= request.user.username)
+            venta = Venta.objects.filter(id_usuario = dato_usuario, venta_finalizada = False).last()
+            detalle_venta = Detalle_Venta.objects.filter(id_venta = venta)
+            lista_prd = []
+            for x in detalle_venta:
+                lista_1 = [
+                    str(x.id_producto),
+                    x.cant_vendida,
+                    str(x.precio_unitario),
+                    int(venta.id),
+                    str(venta.precio_total),
+                ]
+                lista_prd.append(lista_1)
+
+            return lista_prd
+        except:
+            print('Usuario Deslogueado')
             
-        
-
-
-
     # Cuando la pagina pide un POST entra al if.
     if request.method == "POST":
         # Obtengo el usuario registrado.
@@ -183,9 +187,40 @@ def tienda(request):
 
         return render(request, "tienda/tienda.html", context)
     else:
-        # Pruebas
-        
-        # Finpruebas
+        # Condicion para finalizar el pedido con el boton "Finalizar Pedido"
+        if param_int == 1:
+            finalizar_pedido = Venta.objects.filter(
+                id_usuario = dato_usuario,
+            ).last()
+            if (finalizar_pedido.venta_procesada == False) and (finalizar_pedido.venta_finalizada == False):
+                finalizar_pedido.venta_finalizada = True
+                finalizar_pedido.save() 
+
+        if param_str != 'safe':
+            # Condicion para borrar items de el "carrito"
+            # En caso de que el request se esté refiriendo 
+            # a otro pedido pongo la palabra safe como seguridad
+
+            # Traigo el N° Venta de
+            venta_a_borrar = Venta.objects.filter(id=param_int).last()
+            producto = Producto.objects.filter(
+                nombre_prd=param_str,
+                ).last()
+            borrar_art = ''
+            try:
+                borrar_art = Detalle_Venta.objects.filter(
+                    id_venta=venta_a_borrar, 
+                    id_producto=producto.id,
+                    ).last()
+                # Antes de borrar el producto, resto
+                # el valor del producto al valor total de la compra.
+                venta_a_borrar.precio_total -= borrar_art.precio_unitario
+                venta_a_borrar.save()
+                borrar_art.delete()
+            except:
+                print('clase nontype')
+            
+
         formularioVenta = RealizarPedido()
         finalizar_pedido = FinalizarPedido()
         
