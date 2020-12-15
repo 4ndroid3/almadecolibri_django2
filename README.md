@@ -1,6 +1,6 @@
 # alamadecolibri_django2
 
-Proyecto en Django 3.0, con bootstrap 4.5 y una base de datos PostgreSQL para el emprendimiento de Venta de 
+Proyecto en Django 3.1, con bootstrap 4.5 y una base de datos PostgreSQL para el emprendimiento de Venta de 
 productos Naturales Alma de Colibrí en la ciudad de Campana.
 
 El proyecto consta de:
