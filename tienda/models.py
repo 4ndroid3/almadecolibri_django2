@@ -32,4 +32,4 @@ class Detalle_Venta(models.Model):
         verbose_name_plural = 'Detalle Ventas'
 
     def __str__(self):
-        return "{} {} {}".format(str(self.id_producto),str(self.cant_vendida), str(self.precio_unitario))
+        return str(self.id_producto)

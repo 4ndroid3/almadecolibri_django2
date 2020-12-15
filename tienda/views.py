@@ -219,7 +219,7 @@ def tienda(request, param_int=0, param_str=None):
                 borrar_art.delete()
             except:
                 print('clase nontype')
-            
+        
 
         formularioVenta = RealizarPedido()
         finalizar_pedido = FinalizarPedido()
