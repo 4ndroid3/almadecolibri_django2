@@ -81,12 +81,8 @@ WSGI_APPLICATION = 'almadecolibri.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'almadecolibri2',
-        'USER': 'postgres',
-        'PASSWORD': '35981402s',
-        'HOST': '127.0.0.1',
-        'DATABASE_PORT': '57026',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
     }
 }
 
