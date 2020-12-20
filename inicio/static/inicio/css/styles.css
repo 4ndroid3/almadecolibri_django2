@@ -29,7 +29,7 @@ nav {
 }
 
 body {
-    background:linear-gradient(rgba(68, 66, 66, 0.65), rgba(102, 90, 87, 0.65)), url("../img/bg_main.jpg");
+    background:linear-gradient(rgba(68, 66, 66, 0.400), rgba(102, 90, 87, 0.65)), url("../img/bg_main.jpg");
     background-attachment: fixed;
     background-position: center;
     background-size: cover;

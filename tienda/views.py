@@ -1,21 +1,19 @@
+# Django Imports
 from django.shortcuts import render
 from django.contrib.auth.models import User
 import decimal
 
+# Proyect Imports
 from productos.models import Producto
 from tienda.models import Venta, Detalle_Venta
 from tienda.forms import RealizarPedido
 from tienda.forms import FinalizarPedido
 
 def tienda(request, param_int=0, param_str=None):
-    try:
-        dato_usuario = User.objects.get(username= request.user.username)
-    except: 
-        print('Usuario Deslogueado')
-    # View de la tienda de productos
-    # funcion que obtiene todoslos datos de una Venta/carrito
+    # View de la tienda de producto
     def obtener_carrito():
-        try:
+        # Obtiene el carrito con los productos que se muestran en la tienda.
+        if request.user.is_authenticated:
             dato_usuario = User.objects.get(username= request.user.username)
             venta = Venta.objects.filter(id_usuario = dato_usuario, venta_finalizada = False).last()
             detalle_venta = Detalle_Venta.objects.filter(id_venta = venta)
@@ -31,9 +29,15 @@ def tienda(request, param_int=0, param_str=None):
                 lista_prd.append(lista_1)
 
             return lista_prd
-        except:
+        else:
             print('Usuario Deslogueado')
-            
+
+    # Comprueba si el usuario está logueado.
+    # Para luego utilizar el dato en el programa.
+    if request.user.is_authenticated:
+        dato_usuario = User.objects.get(username= request.user.username)
+    else:
+        print('Usuario Deslogueado')   
     # Cuando la pagina pide un POST entra al if.
     if request.method == "POST":
         # Obtengo el usuario registrado.
@@ -51,7 +55,6 @@ def tienda(request, param_int=0, param_str=None):
            
             # Calculo el precio de lo que compro el usuario.
             precio_final = (infoFormulario['cantidad']/100.00)*float(prd_elegido[0].precio)
-            print(infoFormulario['producto'])
             
             # Obtengo el estado de la ultima venta registrada (si existe)
             crear_venta = Venta.objects.filter(id_usuario = dato_usuario).last()
@@ -73,7 +76,6 @@ def tienda(request, param_int=0, param_str=None):
                                 venta_finalizada = False, 
                                 venta_procesada = False,
                         ).last()
-                        print(info_venta)
                         # Luego guardo la compra en la nueva venta.
                         detall_venta = Detalle_Venta(
                             id_venta = info_venta, 
@@ -129,7 +131,6 @@ def tienda(request, param_int=0, param_str=None):
                         venta_finalizada = False, 
                         venta_procesada = False,
                 ).last()
-                print(info_venta)
                 # Luego guardo la compra en la nueva venta.
                 detall_venta = Detalle_Venta(
                     id_venta = info_venta, 
@@ -166,7 +167,6 @@ def tienda(request, param_int=0, param_str=None):
         formulario_finalizar = FinalizarPedido(request.POST)
         if formulario_finalizar.is_valid():
             infoFormulario = formulario_finalizar.cleaned_data
-            print(infoFormulario)
 
             finalizar_pedido = Venta.objects.filter(
                 id_usuario = dato_usuario,
@@ -188,7 +188,7 @@ def tienda(request, param_int=0, param_str=None):
         return render(request, "tienda/tienda.html", context)
     else:
         # Condicion para finalizar el pedido con el boton "Finalizar Pedido"
-        if param_int == 1:
+        if param_int == 1 and param_str == 'safe':
             finalizar_pedido = Venta.objects.filter(
                 id_usuario = dato_usuario,
             ).last()

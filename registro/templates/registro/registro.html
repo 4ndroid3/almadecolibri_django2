@@ -3,12 +3,27 @@
 {% block title %}Create an Account{% endblock %}
 
 {% block content %}
-<div class="jumbotron">
-    <form method="POST" class="form-group">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Register</button>
+<div class="container">
+  <div class="jumbotron">
+    <form action="" method="POST" target="_self">{% csrf_token %}
+      {% for field in form %}
+        <div class="form">
+          <div class="row">
+            <div class="col-md-auto mb-2">
+              <label for="{{ field.name }}">
+                {{ field.label }}
+              </label>
+            </div>
+            <div class="col-md-6 mb-2">
+              {{ field }}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
     </form>
+  </div>
 </div>
+
+
     
 {% endblock %} 
