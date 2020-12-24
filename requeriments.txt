@@ -1,2 +1,3 @@
-pip install Django
-pip install Pillow
+pip install django
+pip install pillow
+pip install pylint

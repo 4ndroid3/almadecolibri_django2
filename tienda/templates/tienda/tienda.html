@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-  {% if user.is_authenticated %}
+  
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-6 mb-2">
@@ -66,7 +66,7 @@
         </div>
       </div>
     </div>
-  {% else %}
+  
     <div class="container text-center">
       <div class="jumbotron">
         <a class="nav-link" href="{% url 'login'%}?next={{request.path}}">INICIAR SESION</a>
@@ -74,6 +74,7 @@
       </div>
       
     </div>
-    
+    {% if user.is_authenticated %}
+    {% else %}
   {% endif %}
 {% endblock %}

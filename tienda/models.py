@@ -9,6 +9,9 @@ from productos.models import Producto
 class Venta(models.Model):
     id = models.AutoField(primary_key=True)
     id_usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    nombre_inv = models.CharField(max_length=150, blank=True)
+    apellido_inv = models.CharField(max_length=150, blank=True)
+    telefono_inv = models.CharField(max_length=150, blank=True)
     fecha_venta = models.DateField(auto_now_add=True)
     precio_total = models.DecimalField(max_digits=10, decimal_places=2, default= 0.0)
     venta_procesada = models.BooleanField(default = False)

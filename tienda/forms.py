@@ -26,8 +26,3 @@ class RealizarPedido(forms.Form):
         # Validador, el valor minimo que deja cargar es 1.
         validators=[MinValueValidator(1, message= "rambo")]
     )
-
-class FinalizarPedido(forms.Form):
-    # Formulario para garantizar que un
-    # pedido está listo para ser Procesado
-    venta_ok = forms.BooleanField()
