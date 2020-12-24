@@ -5,10 +5,12 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-6 mb-2">
-          <h2 style="color:white;">Cargar producto:</h2>
+          <h2 style="color:white;">Cargar producto 🛍</h2>
           <br>
           <form action="" method="POST" target="_self">{% csrf_token %}
-            <p style="color: white">USUARIO: {{ user.get_username }}</p>
+            <p style="color: white">
+              USUARIO: {% if user.is_authenticated %} {{ user.get_username.upper }} {% else %} INVITADO {% endif %}
+            </p>
             {% for field in formularioVenta %}
                <div class="form">
                 <div class="row">
