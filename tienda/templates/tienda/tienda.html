@@ -64,7 +64,14 @@
                 </tr>
               </tbody>
           </table>
+          {% if user.is_authenticated %}
           <a class="btn btn-primary" href="/shop/1/safe" role="button">Finalizar Pedido</a>
+          {% else %}
+          <a class="btn btn-primary" role="button" data-toggle="modal" data-target="#modal_invtiado">Finalizar Pedido</a>
+          {% include "tienda/modal_datos_invitado.html" %}
+          
+        </div>
+          {% endif %}
         </div>
       </div>
     </div>

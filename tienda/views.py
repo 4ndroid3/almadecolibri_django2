@@ -5,7 +5,7 @@ import decimal
 # Proyect Imports
 from productos.models import Producto
 from tienda.models import Venta, Detalle_Venta
-from tienda.forms import RealizarPedido
+from tienda.forms import RealizarPedido, DatosInvitado
 
 def tienda(request, param_int=0, param_str=None):
     # View de la tienda de producto
@@ -127,6 +127,96 @@ def tienda(request, param_int=0, param_str=None):
             # Agrego el precio a la venta.
             venta.precio_total += precio_final
             venta.save()
+    def realizar_compra_invitado(id_usuario, precio_final, datos_formulaio_venta):
+        # Paso el usuario como session para que se genere la session_key
+        request.session['usuario'] = str(User.objects.get(username= 'invitado'))
+        # Obtengo el estado de la ultima venta registrada (si existe)
+        crear_venta = Venta.objects.filter(id_usuario = id_usuario, nombre_inv = request.session.session_key).last()
+        if crear_venta != None:
+            try:
+                # Primer caso, que crea una venta, 
+                # cuando venta finalizada o procesada están True.
+                if (crear_venta.venta_finalizada == True) and (crear_venta.venta_procesada == True):
+                    # Agrego el dato del usuario para que se cree
+                    # una nueva venta.
+                    venta = Venta(
+                        id_usuario = id_usuario,
+                        nombre_inv = request.session.session_key,
+                    )
+                    venta.save()
+                    # Busco la venta recien creada.
+                    info_venta = Venta.objects.filter(
+                            id_usuario = id_usuario, 
+                            nombre_inv = request.session.session_key,
+                            venta_finalizada = False, 
+                            venta_procesada = False,
+                    ).last()
+                    # Luego guardo la compra en la nueva venta.
+                    detall_venta = Detalle_Venta(
+                        id_venta = info_venta, 
+                        id_producto = datos_formulaio_venta['producto'], 
+                        cant_vendida = datos_formulaio_venta['cantidad'],
+                        precio_unitario = precio_final
+                    )
+                    detall_venta.save()
+                    # Agrego el precio a la venta.
+                    venta.precio_total += precio_final
+                    venta.save()
+                elif (crear_venta.venta_finalizada == False) and (crear_venta.venta_procesada == False):
+                    # Guardola compra en la venta.
+                    detall_venta = Detalle_Venta(
+                        id_venta = crear_venta, 
+                        id_producto = datos_formulaio_venta['producto'], 
+                        cant_vendida = datos_formulaio_venta['cantidad'],
+                        precio_unitario = precio_final
+                    )
+                    detall_venta.save()
+                    # Agrego el precio a la venta.
+                    crear_venta.precio_total += decimal.Decimal(precio_final)
+                    crear_venta.save()
+                elif (crear_venta.venta_finalizada == True) and (crear_venta.venta_procesada == False):
+                    # Busco si el usuario tiene 
+                    # venta finalizada pero no procesada.
+                    # Y la cambio a False
+                    crear_venta.venta_finalizada = False
+                    crear_venta.save()
+                    # Agrego el nuevo producto
+                    detall_venta = Detalle_Venta(
+                        id_venta = crear_venta, 
+                        id_producto = datos_formulaio_venta['producto'], 
+                        cant_vendida = datos_formulaio_venta['cantidad'],
+                        precio_unitario = precio_final
+                    )
+                    detall_venta.save()
+                    # Agrego el precio a la venta.
+                    crear_venta.precio_total += decimal.Decimal(precio_final)
+                    crear_venta.save()
+            except:
+                print('Error de indice 2')
+        else:
+            venta = Venta(
+                id_usuario = id_usuario,
+                nombre_inv = request.session.session_key,
+            )
+            venta.save()
+            # Busco la venta recien creada.
+            info_venta = Venta.objects.filter(
+                    id_usuario = id_usuario, 
+                    nombre_inv = request.session.session_key,
+                    venta_finalizada = False, 
+                    venta_procesada = False,
+            ).last()
+            # Luego guardo la compra en la nueva venta.
+            detall_venta = Detalle_Venta(
+                id_venta = info_venta, 
+                id_producto = datos_formulaio_venta['producto'], 
+                cant_vendida = datos_formulaio_venta['cantidad'],
+                precio_unitario = precio_final
+            )
+            detall_venta.save()
+            # Agrego el precio a la venta.
+            venta.precio_total += precio_final
+            venta.save()
     def finalizar_pedido(parametro_int, parametro_str):
         if parametro_int == 1 and parametro_str == 'safe':
             finalizar_pedido = Venta.objects.filter(
@@ -159,13 +249,14 @@ def tienda(request, param_int=0, param_str=None):
                 borrar_art.delete()
             except:
                 print('clase nontype')
-
+    
     # Cuando la pagina pide un POST entra al if.
     if request.method == "POST":
         if request.user.is_authenticated:
             # Traigo el usuario que esté logueado
             dato_usuario = User.objects.get(username= request.user.username)
             formularioVenta = RealizarPedido(request.POST)
+            print(formularioVenta)
             # Si se llenaron todos los casilleros del formulario entra al if.
             if formularioVenta.is_valid():
                 # Paso los datos del formulario a una variable.
@@ -211,14 +302,33 @@ def tienda(request, param_int=0, param_str=None):
                 precio_final = (infoFormulario['cantidad']/100.00)*float(prd_elegido[0].precio)
                 
                 # llama a la funcion que agrega los productos a la DB
-                realizar_compra(dato_usuario,precio_final,infoFormulario)
+                realizar_compra_invitado(dato_usuario, precio_final, infoFormulario)
 
+            formularioInvitado = DatosInvitado(request.POST)
+            print(formularioInvitado.is_valid)
+            if formularioInvitado.is_valid():
+                infoFormulario = formularioInvitado.cleaned_data
+                actualizar_venta = Venta.objects.filter(
+                    id_usuario = dato_usuario, 
+                    nombre_inv = request.session.session_key,
+                    ).last()
+                actualizar_venta.nombre_inv = infoFormulario['nombre']
+                actualizar_venta.apellido_inv = infoFormulario['apellido']
+                actualizar_venta.telefono_inv = infoFormulario['teléfono']
+                actualizar_venta.save()
+
+                del request.session['usuario']
+
+                # funcion para finalizar el pedido con el boton "Finalizar Pedido"
+                finalizar_pedido(param_int, param_str)
 
             formularioVenta = RealizarPedido()
+            formularioInvitado = DatosInvitado()
                 
             context = {
                 'formularioVenta': formularioVenta,
                 'lista_ventas': obtener_carrito(dato_usuario),
+                'formularioInvitado': formularioInvitado,
             }
 
             return render(request, "tienda/tienda.html", context)
@@ -226,21 +336,10 @@ def tienda(request, param_int=0, param_str=None):
         if request.user.is_authenticated:
             # Traigo el usuario que esté logueado
             dato_usuario = User.objects.get(username= request.user.username)
-            # funcion para finalizar el pedido con el boton "Finalizar Pedido"
-            finalizar_pedido(param_int, param_str)
             # funcion para eliminar un producto de la lista de comprados.
             eliminar_producto(param_int, param_str)
             
-            def crear_compra_invitado():
-                # Paso el usuario como session para que se genere la session_key
-                request.session['repro'] = str(User.objects.get(username= 'invitado'))
-                
-                venta = Venta(
-                    id_usuario = User.objects.get(username= 'invitado'),
-                    nombre_inv = request.session.session_key,
-                )
-                venta.save()
-                
+           
             formularioVenta = RealizarPedido()
             
             context = {
@@ -252,16 +351,16 @@ def tienda(request, param_int=0, param_str=None):
         else:
             # usuario invitado por defecto
             dato_usuario = User.objects.get(username= 'invitado')
-            # funcion para finalizar el pedido con el boton "Finalizar Pedido"
-            finalizar_pedido(param_int, param_str)
             # funcion para eliminar un producto de la lista de comprados.
             eliminar_producto(param_int, param_str)
 
             formularioVenta = RealizarPedido()
+            formularioInvitado = DatosInvitado()
             
             context = {
                 'formularioVenta': formularioVenta,
                 'lista_ventas': obtener_carrito(dato_usuario),
+                'formularioInvitado': formularioInvitado,
             }
 
             return render(request, "tienda/tienda.html", context)

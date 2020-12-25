@@ -26,3 +26,10 @@ class RealizarPedido(forms.Form):
         # Validador, el valor minimo que deja cargar es 1.
         validators=[MinValueValidator(1, message= "rambo")]
     )
+
+class DatosInvitado(forms.Form):
+    # Formulario que le pide los datos
+    #  a los usuarios invitados
+    nombre = forms.CharField()
+    apellido = forms.CharField()
+    teléfono = forms.CharField()
