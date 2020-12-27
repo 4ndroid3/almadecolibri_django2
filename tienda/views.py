@@ -1,3 +1,4 @@
+# Django Imports
 from django.shortcuts import render
 from django.contrib.auth.models import User
 import decimal
@@ -105,28 +106,7 @@ def tienda(request, param_int=0, param_str=None):
                     print('Error de indice 1')
             except:
                 print('Error de indice 2')
-        else:
-            venta = Venta(
-                id_usuario = id_usuario,
-            )
-            venta.save()
-            # Busco la venta recien creada.
-            info_venta = Venta.objects.filter(
-                    id_usuario = id_usuario, 
-                    venta_finalizada = False, 
-                    venta_procesada = False,
-            ).last()
-            # Luego guardo la compra en la nueva venta.
-            detall_venta = Detalle_Venta(
-                id_venta = info_venta, 
-                id_producto = datos_formulaio_venta['producto'], 
-                cant_vendida = datos_formulaio_venta['cantidad'],
-                precio_unitario = precio_final
-            )
-            detall_venta.save()
-            # Agrego el precio a la venta.
-            venta.precio_total += precio_final
-            venta.save()
+        
     def realizar_compra_invitado(id_usuario, precio_final, datos_formulaio_venta):
         # Paso el usuario como session para que se genere la session_key
         request.session['usuario'] = str(User.objects.get(username= 'invitado'))
@@ -256,7 +236,6 @@ def tienda(request, param_int=0, param_str=None):
             # Traigo el usuario que esté logueado
             dato_usuario = User.objects.get(username= request.user.username)
             formularioVenta = RealizarPedido(request.POST)
-            print(formularioVenta)
             # Si se llenaron todos los casilleros del formulario entra al if.
             if formularioVenta.is_valid():
                 # Paso los datos del formulario a una variable.
@@ -305,7 +284,6 @@ def tienda(request, param_int=0, param_str=None):
                 realizar_compra_invitado(dato_usuario, precio_final, infoFormulario)
 
             formularioInvitado = DatosInvitado(request.POST)
-            print(formularioInvitado.is_valid)
             if formularioInvitado.is_valid():
                 infoFormulario = formularioInvitado.cleaned_data
                 actualizar_venta = Venta.objects.filter(
@@ -338,7 +316,7 @@ def tienda(request, param_int=0, param_str=None):
             dato_usuario = User.objects.get(username= request.user.username)
             # funcion para eliminar un producto de la lista de comprados.
             eliminar_producto(param_int, param_str)
-            
+            finalizar_pedido(param_int, param_str)
            
             formularioVenta = RealizarPedido()
             

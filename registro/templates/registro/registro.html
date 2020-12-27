@@ -1,26 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}Create an Account{% endblock %}
+{% block title %}Creacion de cuenta{% endblock %}
 
 {% block content %}
 <div class="container">
   <div class="jumbotron">
+{% if user.is_authenticated %}
+  <h1 class="text-center">Ya se encuentra registrado</h1>
+  {% else %}
     <form action="" method="POST" target="_self">{% csrf_token %}
       {% for field in form %}
-        <div class="form">
-          <div class="row">
-            <div class="col-md-auto mb-2">
-              <label for="{{ field.name }}">
-                {{ field.label }}
-              </label>
-            </div>
-            <div class="col-md-6 mb-2">
-              {{ field }}
-            </div>
-          </div>
+      <div class="form-group row">
+        <div class="col-sm-2 col-form-label">
+          {{ field.label }}
         </div>
+        <div class="col-sm-auto">
+          {{ field }}
+        </div>
+        <div class="col-sm-auto">
+          {{ field.errors }}
+          {{ field.help_text }}
+        </div>
+      </div>
       {% endfor %}
+      <br>
+      <button class="btn btn-primary" type="submit">Completar</button>
     </form>
+  {% endif %}
   </div>
 </div>
+
 {% endblock %} 
