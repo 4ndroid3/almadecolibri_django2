@@ -1,6 +1,7 @@
 # Django Imports
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
 # Proyect Imports
 from productos.models import Producto
@@ -77,6 +78,28 @@ def productos(request,param=0):
                         print('Error de indice 1')
                 except:
                     print('Error de indice 2')
+            else:
+                venta = Venta(
+                    id_usuario = id_usuario,
+                )
+                venta.save()
+                # Busco la venta recien creada.
+                info_venta = Venta.objects.filter(
+                        id_usuario = id_usuario,
+                        venta_finalizada = False,
+                        venta_procesada = False,
+                ).last()
+                # Luego guardo la compra en la nueva venta.
+                detall_venta = Detalle_Venta(
+                    id_venta = info_venta,
+                    id_producto = Producto.objects.get(id=datos_formulario['id_producto']),
+                    cant_vendida = datos_formulario['cantidad_a_comprar'],
+                    precio_unitario = obtener_precio_final
+                )
+                detall_venta.save()
+                # Agrego el precio a la venta.
+                venta.precio_total += obtener_precio_final
+                venta.save()
     def realizar_compra_invitado(id_usuario, obtener_precio_final, datos_formulario):
         request.session['usuario'] = str(User.objects.get(username= 'invitado'))
         crear_venta = Venta.objects.filter(id_usuario = id_usuario, nombre_inv = request.session.session_key).last()
@@ -167,13 +190,15 @@ def productos(request,param=0):
                 id_venta = info_venta, 
                 id_producto = Producto.objects.get(id=datos_formulario['id_producto']), 
                 cant_vendida = datos_formulario['cantidad_a_comprar'],
-                precio_unitario = precio_final
+                precio_unitario = obtener_precio_final
             )
             detall_venta.save()
             # Agrego el precio a la venta.
-            venta.precio_total += precio_final
+            venta.precio_total += obtener_precio_final
             venta.save()
-
+    def ordenar_por_cant_ventas():
+        sum_total = Producto.objects.annotate(total_vendido= Sum('detalle_venta__cant_vendida')).order_by('-total_vendido')
+        return sum_total
     if request.method == "POST":
         if request.user.is_authenticated:
             dato_usuario = User.objects.get(username= request.user.username)
@@ -205,7 +230,7 @@ def productos(request,param=0):
 
                 return render(request, 'productos/productos.html', context)
         else:
-            print('rastamandita')
+            
             dato_usuario = User.objects.get(username= 'invitado')
             formulario_agregar = AgregarAlPedido(request.POST)
             if formulario_agregar.is_valid():
@@ -226,6 +251,7 @@ def productos(request,param=0):
 
             return render(request, 'productos/productos.html', context)
     else:
+        
         # Ordena Alfabeticamente
         if param == 0:
             palabra_buscada = request.GET.get('search_box', '')
@@ -242,7 +268,7 @@ def productos(request,param=0):
                 nombre_prd__icontains=palabra_buscada).order_by('id_categoria')    
         elif param == 3:
             palabra_buscada = request.GET.get('search_box', '')
-            busqueda_producto = Producto.objects.filter(nombre_prd__icontains=palabra_buscada)
+            busqueda_producto = ordenar_por_cant_ventas()
 
         
 
