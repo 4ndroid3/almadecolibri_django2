@@ -33,27 +33,39 @@
             </ol>
             <div class="carousel-inner">
               <div class="carousel-item active">
-                <img src="{% static 'inicio/img/principal8.jpg' %}" class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                  <h2>Almendras</h2>
+                <div class="text-center">
+                  <img src="{{ mas_vendidos.0.imagen_prd.url }}" class="img-fluid" alt="responsive image">
+                </div>
+                
+                <div class="carousel-caption d-md-block">
+                  <h2 style="color: rgba(64, 79, 36, 1.0);">{{ mas_vendidos.0.nombre_prd }}</h2>
                 </div>
               </div>
               <div class="carousel-item">
-                <img src="{% static 'inicio/img/principal4.jpg' %}" class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                  <h2>Castañas de cajú</h2>
+                <div class="text-center">
+                  <img src="{{ mas_vendidos.1.imagen_prd.url }}" class="img-fluid" alt="responsive image">
+                </div>
+                
+                <div class="carousel-caption d-md-block">
+                  <h2 style="color: rgba(64, 79, 36, 1.0);">{{ mas_vendidos.1.nombre_prd }}</h2>
                 </div>
               </div>
               <div class="carousel-item">
-                <img src="{% static 'inicio/img/principal6.jpg' %}" class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                  <h2>Maníes</h2>
+                <div class="text-center">
+                  <img src="{{ mas_vendidos.2.imagen_prd.url }}" class="img-fluid" alt="...">
+                </div>
+                
+                <div class="carousel-caption d-md-block">
+                  <h2 style="color: rgba(64, 79, 36, 1.0);">{{ mas_vendidos.2.nombre_prd }}</h2>
                 </div>
               </div>
               <div class="carousel-item">
-                <img src="{% static 'inicio/img/principal7.jpg' %}" class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                  <h2>Avellanas</h2>
+                <div class="text-center">
+                  <img src="{{ mas_vendidos.3.imagen_prd.url }}" class="img-fluid" alt="responsive image">
+                </div>
+                
+                <div class="carousel-caption d-md-block">
+                  <h2 style="color: rgba(64, 79, 36, 1.0);">{{ mas_vendidos.3.nombre_prd }}</h2>
                 </div>
               </div>
             </div>
