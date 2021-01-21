@@ -6,7 +6,7 @@ productos Naturales Alma de Colibrí en la ciudad de Campana.
 El proyecto consta de:
 
 Inicio:
-  Pagina de inicio donde se puede ver un resumen de los productos y una breve descripción de el emprendimiento.
+  Pagina de inicio donde se puede ver un resumen de los productos y una breve descripción del emprendimiento.
 
 Productos:
   Lista visual de los productos a la venta, con su imagen, descripción y precio. Busqueda de productos, filtro por categorias o precios. Ademas se puede agregar productos
