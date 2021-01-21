@@ -11,7 +11,9 @@ from tienda.forms import RealizarPedido, DatosInvitado
 def tienda(request, param_int=0, param_str=None):
     # View de la tienda de producto
     def obtener_carrito(id_usuario):
-        # Obtiene el carrito con los productos que se muestran en la tienda.
+        """ Función que obtiene el carrito de compras, acumula los productos agregados y los muestra
+        en una tabla, con el precio, cantidad comprada y precio total.
+        El if principal de la función divide a los usuarios registrados y no registrados"""
         if request.user.is_authenticated:
             venta = Venta.objects.filter(id_usuario = id_usuario, venta_finalizada = False).last()
             detalle_venta = Detalle_Venta.objects.filter(id_venta = venta)
