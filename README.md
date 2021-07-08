@@ -19,5 +19,5 @@ Registro:
   Registro de usuario para realizar las compras. Sistema de logueo y autentificacion, para llevar un seguimiento de 
   los productos comprados por cada usuario.
   
-## Diagrama de la DB
+## Diagrama DB
 ![drawSQL-export-2021-07-07_22_43](https://user-images.githubusercontent.com/35976464/124849267-d2287800-df74-11eb-96e9-f395d6a0711f.png)
