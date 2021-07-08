@@ -1,4 +1,4 @@
-# alamadecolibri_django2
+# E-Shop Alamadecolibri
 
 Proyecto en Django 3.1, con bootstrap 4.5 y DB en SQLite3;para el emprendimiento de Venta de 
 productos Naturales Alma de Colibrí en la ciudad de Campana.
