@@ -21,3 +21,9 @@ Registro:
   
 ## Diagrama DB
 ![drawSQL-export-2021-07-07_22_43](https://user-images.githubusercontent.com/35976464/124849267-d2287800-df74-11eb-96e9-f395d6a0711f.png)
+
+## Imagenes de la página
+![AC1](https://user-images.githubusercontent.com/35976464/126561174-bbf38745-a071-42de-830c-4904f5ace810.png)
+![AC2](https://user-images.githubusercontent.com/35976464/126561185-8edf001a-3dfe-4769-be6f-31164ffdfa45.png)
+![AC3](https://user-images.githubusercontent.com/35976464/126561188-0191e4a8-35bd-407f-9465-adcb3473a4fe.png)
+
